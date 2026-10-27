@@ -700,6 +700,11 @@ local function settingsTick()
     end
 end
 
+local BANNER_SECONDS = 6
+local banner = nil        -- { widget, untilT }
+local bannerShown = false
+local freeTicks = 0
+
 -- On a level change the game frees its old objects and may reuse their memory, so every cached
 -- reference must be dropped (calling into a stale one crashes the game).
 local lastWorld = nil
@@ -708,12 +713,64 @@ local function resetOnWorldChange()
     local id = valid(w) and w:GetAddress() or 0
     if id ~= lastWorld then
         lastWorld = id
-        page, ui, menuOpen, pageScan = nil, nil, nil, 0
+        page, ui, menuOpen, pageScan, banner = nil, nil, nil, 0, nil
         threats, killSeqs, wasActive = {}, {}, {}
         duckState, blackoutUntil, alertUntil = nil, 0, 0
         log("world changed, caches cleared")
     end
     return id ~= 0
+end
+
+------------------------------------------------------------------------ "loaded" message once the player has control
+
+
+local function showBanner()
+    local gi, pc = UEHelpers.GetGameInstance(), UEHelpers.GetPlayerController()
+    if not (valid(gi) and valid(pc)) then return end
+    -- The first time the player can actually walk around as Simon (apartment or motel): playing as
+    -- him, camera on him, movement not blocked by a cutscene. Must hold for ~1s.
+    local pawn = pc.Pawn
+    local vt = pc:GetViewTarget()
+    local free = valid(pawn) and className(pawn):find("MainCharacter", 1, true)
+        and valid(vt) and vt:GetAddress() == pawn:GetAddress()
+        and not pc:IsMoveInputIgnored()
+    freeTicks = free and freeTicks + 1 or 0
+    if freeTicks < 20 then return end
+    for _, cls in ipairs({ "WBP_Pause_C", "WBP_MainTitleSettingsWidget_C" }) do   -- borrow the game's font
+        for _, m in ipairs(findAll(cls)) do
+            pcall(function() if valid(m.Setting_ShowToolTips) then fontSrc = m.Setting_ShowToolTips.TB_SettingName end end)
+        end
+    end
+    local w = newObj("/Script/UMG.UserWidget", gi, "EasyBanner")
+    local tree = newObj("/Script/UMG.WidgetTree", w, "EasyBannerTree")
+    w.WidgetTree = tree
+    local canvas = newObj("/Script/UMG.CanvasPanel", tree, "EasyBannerCanvas")
+    tree.RootWidget = canvas
+    canvas:SetVisibility(3)   -- never blocks clicks
+    local vb = newObj("/Script/UMG.VerticalBox", tree, "EasyBannerVB")
+    vb:AddChild(label(tree, "Hykeem's Easy Mode Loaded", 28, color(0.45, 1, 0.45, 1)))
+    vb:AddChild(label(tree, "Settings / Esc menu > HYKEEM'S EASY MODE (bottom-right)    " .. cfg.ToggleKey .. " on/off", 16, color(0.75, 0.75, 0.75, 1)))
+    local slot = canvas:AddChildToCanvas(vb)
+    slot:SetAnchors({ Minimum = { X = 1, Y = 0 }, Maximum = { X = 1, Y = 0 } })
+    slot:SetAlignment({ X = 1, Y = 0 })
+    slot:SetAutoSize(true)
+    slot:SetPosition({ X = -40, Y = 36 })
+    w:AddToViewport(3000)
+    banner = { widget = w, untilT = now() + BANNER_SECONDS }
+    bannerShown = true
+    log("loaded banner shown")
+end
+
+local function bannerTick()
+    if not bannerShown then safe("banner", showBanner); return end
+    if not banner then return end
+    if not valid(banner.widget) then banner = nil; return end
+    local left = banner.untilT - now()
+    if left <= 0 then
+        banner.widget:RemoveFromParent(); banner = nil
+    elseif left < 1 then
+        banner.widget:SetRenderOpacity(left)   -- fade out over the last second
+    end
 end
 
 ------------------------------------------------------------------------ main tick
@@ -722,6 +779,7 @@ local slow = 0
 local wasEnabled = cfg.Enabled
 local function tick()
     if not resetOnWorldChange() then return end   -- loading
+    bannerTick()
     safe("settings", settingsTick)
 
     -- every ~1.5s: re-apply tuning (also on the title screen, so new runs get the starting coin)
