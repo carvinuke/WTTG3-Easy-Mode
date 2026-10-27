@@ -1,4 +1,4 @@
--- Hykeem's WTTG3 Baby Mode
+-- Hykeem's WTTG3 Easy Mode
 -- by Shrimp, idea from Hykeem the Legend.
 -- UE4SS Lua mod. Defaults live in config.lua; changes made in the game's
 -- Settings screen are saved to settings.lua next to it.
@@ -6,7 +6,7 @@
 local UEHelpers = require("UEHelpers")
 local cfg = require("config")
 
-local TAG = "[BabyMode] "
+local TAG = "[EasyMode] "
 local function log(msg) print(TAG .. tostring(msg) .. "\n") end
 
 ------------------------------------------------------------------------ helpers
@@ -71,7 +71,7 @@ end
 
 local saveDue = false
 local function save()
-    local lines = { "-- Saved by Hykeem's Baby Mode from the in-game Settings screen. Delete to reset.", "return {" }
+    local lines = { "-- Saved by Hykeem's Easy Mode from the in-game Settings screen. Delete to reset.", "return {" }
     for _, k in ipairs(SAVED_KEYS) do
         local v = cfg[k]
         table.insert(lines, string.format("    %s = %s,", k, type(v) == "number" and string.format("%.3f", v) or tostring(v)))
@@ -268,7 +268,7 @@ end
 local function color(r, g, b, a) return { SpecifiedColor = { R = r, G = g, B = b, A = a or 1 }, ColorUseRule = 0 } end
 
 local function newText(tree, canvas, x, y, scale, col, centered)
-    local tb = newObj("/Script/UMG.TextBlock", tree, "BabyText")
+    local tb = newObj("/Script/UMG.TextBlock", tree, "EasyText")
     local slot = canvas:AddChildToCanvas(tb)
     slot:SetAutoSize(true)
     if centered then
@@ -289,10 +289,10 @@ end
 local function buildUI()
     local gi = UEHelpers.GetGameInstance()
     if not valid(gi) then return end
-    local w = newObj("/Script/UMG.UserWidget", gi, "BabyModeHUD")
-    local tree = newObj("/Script/UMG.WidgetTree", w, "BabyTree")
+    local w = newObj("/Script/UMG.UserWidget", gi, "EasyModeHUD")
+    local tree = newObj("/Script/UMG.WidgetTree", w, "EasyTree")
     w.WidgetTree = tree
-    local canvas = newObj("/Script/UMG.CanvasPanel", tree, "BabyCanvas")
+    local canvas = newObj("/Script/UMG.CanvasPanel", tree, "EasyCanvas")
     tree.RootWidget = canvas
 
     local u = { widget = w, esp = {} }
@@ -383,7 +383,7 @@ local function checkJumpscares()
             if valid(p) and p:IsPlaying() then
                 if blackoutUntil < now() then
                     log("skipping jumpscare: " .. objName(a))
-                    showAlert("Caught! Baby Mode skipped the jumpscare.")
+                    showAlert("Caught! Easy Mode skipped the jumpscare.")
                 end
                 blackout(4)
                 p:SetPlayRate(25.0)   -- race to the end so the normal game-over still fires
@@ -471,7 +471,7 @@ local function progressText()
         gs.PlayerData.DOSCoinBalance, gs.PlayerData.YoloYenBalance, visited, total)
 end
 
------------------------------------------------------------------------- Baby Mode page (opened from the game's Settings / pause menu)
+------------------------------------------------------------------------ Easy Mode page (opened from the game's Settings / pause menu)
 
 -- One simple column, grouped. A row may carry a slider for its strength.
 local ROWS = {
@@ -552,7 +552,7 @@ local function openMenuWidget()
 end
 
 local function label(tree, text, size, col)
-    local tb = newObj("/Script/UMG.TextBlock", tree, "BabyLabel")
+    local tb = newObj("/Script/UMG.TextBlock", tree, "EasyLabel")
     if fontSrc then pcall(function() tb:SetFont(fontOf(fontSrc, size)) end) end
     tb:SetColorAndOpacity(col or color(0.85, 0.85, 0.85, 1))
     tb:SetText(FText(text))
@@ -560,13 +560,13 @@ local function label(tree, text, size, col)
 end
 
 local function checkWithLabel(tree, text, size, col)
-    local cb = newObj("/Script/UMG.CheckBox", tree, "BabyCheck")
+    local cb = newObj("/Script/UMG.CheckBox", tree, "EasyCheck")
     cb:SetContent(label(tree, "  " .. text, size, col))
     return cb
 end
 
 local function sized(tree, widget, h, wdt)
-    local sb = newObj("/Script/UMG.SizeBox", tree, "BabySize")
+    local sb = newObj("/Script/UMG.SizeBox", tree, "EasySize")
     if h then sb:SetHeightOverride(h) end
     if wdt then sb:SetWidthOverride(wdt) end
     sb:SetContent(widget)
@@ -574,7 +574,7 @@ local function sized(tree, widget, h, wdt)
 end
 
 local function gap(tree, h)
-    local s = newObj("/Script/UMG.Spacer", tree, "BabyGap")
+    local s = newObj("/Script/UMG.Spacer", tree, "EasyGap")
     s:SetSize({ X = 1, Y = h })
     return s
 end
@@ -584,18 +584,18 @@ local function buildPage(menu)
     if not valid(gi) then return end
     pcall(function() fontSrc = menu.Setting_ShowToolTips.TB_SettingName end)
 
-    local w = newObj("/Script/UMG.UserWidget", gi, "BabyPage")
-    local tree = newObj("/Script/UMG.WidgetTree", w, "BabyPageTree")
+    local w = newObj("/Script/UMG.UserWidget", gi, "EasyPage")
+    local tree = newObj("/Script/UMG.WidgetTree", w, "EasyPageTree")
     w.WidgetTree = tree
-    local canvas = newObj("/Script/UMG.CanvasPanel", tree, "BabyPageCanvas")
+    local canvas = newObj("/Script/UMG.CanvasPanel", tree, "EasyPageCanvas")
     tree.RootWidget = canvas
     canvas:SetVisibility(4)   -- clicks on empty space go through to the game's menu
 
     -- Launcher, bottom-right.
-    local launchBg = newObj("/Script/UMG.Border", tree, "BabyLaunchBg")
+    local launchBg = newObj("/Script/UMG.Border", tree, "EasyLaunchBg")
     launchBg:SetBrushColor({ R = 0.08, G = 0.08, B = 0.08, A = 0.95 })
     launchBg:SetPadding({ Left = 14, Top = 8, Right = 18, Bottom = 8 })
-    local launcher = checkWithLabel(tree, "HYKEEM'S BABY MODE", 22)
+    local launcher = checkWithLabel(tree, "HYKEEM'S EASY MODE", 22)
     launchBg:SetContent(launcher)
     local ls = canvas:AddChildToCanvas(launchBg)
     ls:SetAnchors({ Minimum = { X = 1, Y = 1 }, Maximum = { X = 1, Y = 1 } })
@@ -604,7 +604,7 @@ local function buildPage(menu)
     ls:SetPosition({ X = -40, Y = -40 })
 
     -- The page, centred.
-    local panel = newObj("/Script/UMG.Border", tree, "BabyPagePanel")
+    local panel = newObj("/Script/UMG.Border", tree, "EasyPagePanel")
     panel:SetBrushColor({ R = 0.06, G = 0.06, B = 0.06, A = 0.97 })
     panel:SetPadding({ Left = 44, Top = 30, Right = 44, Bottom = 26 })
     local ps = canvas:AddChildToCanvas(panel)
@@ -613,11 +613,11 @@ local function buildPage(menu)
     ps:SetAutoSize(true)
     ps:SetPosition({ X = 0, Y = -20 })
 
-    local vb = newObj("/Script/UMG.VerticalBox", tree, "BabyPageVB")
+    local vb = newObj("/Script/UMG.VerticalBox", tree, "EasyPageVB")
     panel:SetContent(vb)
 
     -- Header: master switch + one line of progress.
-    local master = checkWithLabel(tree, "BABY MODE  (" .. cfg.ToggleKey .. ")", 30, color(0.95, 0.95, 0.95, 1))
+    local master = checkWithLabel(tree, "EASY MODE  (" .. cfg.ToggleKey .. ")", 30, color(0.95, 0.95, 0.95, 1))
     vb:AddChild(master)
     local progress = label(tree, "", 17, color(0.55, 0.9, 0.55, 1))
     vb:AddChild(progress)
@@ -628,13 +628,13 @@ local function buildPage(menu)
             vb:AddChild(gap(tree, 14))
             vb:AddChild(label(tree, r.section, 15, color(0.5, 0.5, 0.5, 1)))
         else
-            local hb = newObj("/Script/UMG.HorizontalBox", tree, "BabyRow")
+            local hb = newObj("/Script/UMG.HorizontalBox", tree, "EasyRow")
             local cb = checkWithLabel(tree, r.label, 19)
             hb:AddChild(sized(tree, cb, nil, 470))
             local entry = { row = r, cb = cb }
             table.insert(rows, entry)
             if r.slider then
-                local s = newObj("/Script/UMG.Slider", tree, "BabySlider")
+                local s = newObj("/Script/UMG.Slider", tree, "EasySlider")
                 s:SetMinValue(r.slider.min); s:SetMaxValue(r.slider.max); s:SetStepSize(r.slider.step)
                 s:SetValue(cfg[r.slider.k])
                 hb:AddChild(sized(tree, s, nil, 200))
@@ -653,7 +653,7 @@ local function buildPage(menu)
 
     w:AddToViewport(2000)
     page = { widget = w, launcher = launcher, back = back, panel = panel, rows = rows, progress = progress }
-    log("baby mode page built")
+    log("easy mode page built")
 end
 
 local function syncRow(r)
@@ -801,7 +801,7 @@ end
 
 bind(cfg.ToggleKey, function()
     cfg.Enabled = not cfg.Enabled
-    log("Baby Mode " .. (cfg.Enabled and "ON" or "OFF"))
+    log("Easy Mode " .. (cfg.Enabled and "ON" or "OFF"))
     applyTuning() -- restores originals when off
     saveDue = true
 end)

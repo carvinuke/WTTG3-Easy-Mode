@@ -1,6 +1,6 @@
--- Hykeem's WTTG3 Baby Mode - settings
+-- Hykeem's WTTG3 Easy Mode - settings
 -- These are the defaults. Easiest way to change them: open Settings (or press Esc in game) and
--- click "HYKEEM'S BABY MODE" bottom-right. Changes there are saved to settings.lua and override this file.
+-- click "HYKEEM'S EASY MODE" bottom-right. Changes there are saved to settings.lua and override this file.
 -- You can also edit this file, then restart the game. true = on, false = off.
 -- Multipliers: 2.0 = double, 0.5 = half, 1.0 = unchanged.
 

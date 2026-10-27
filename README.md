@@ -1,10 +1,8 @@
-# Hykeem's WTTG3 Baby Mode
+# Hykeem's WTTG3 Easy Mode
 
 An easy mode for **Welcome to the Game III**, for people who get scared easily or are new to horror games.
 
 By Shrimp. Idea from Hykeem the Legend.
-
-![The Baby Mode settings page](docs/baby-mode-page.jpg)
 
 ## What it does
 
@@ -30,7 +28,7 @@ Every feature can be switched on or off in game.
 
 ## Install
 
-1. Download `HykeemsBabyMode-Install.zip` from [Releases](../../releases/latest).
+1. Download `HykeemsEasyMode-Install.zip` from [Releases](../../releases/latest).
 2. In Steam, right-click **Welcome to the Game III** and choose **Manage → Browse local files**.
 3. Extract everything from the zip into that folder. If Windows asks about merging folders or replacing files, say yes.
 4. Start the game from Steam as usual.
@@ -41,16 +39,16 @@ The zip contains [UE4SS](https://github.com/UE4SS-RE/RE-UE4SS) (the mod loader) 
 
 ### Already have UE4SS?
 
-Copy the `HykeemsBabyMode` folder from this repo into `WTTGSD\Binaries\Win64\ue4ss\Mods\`. UE4SS needs to be a recent experimental build, since the game runs on Unreal Engine 5.6.
+Copy the `HykeemsEasyMode` folder from this repo into `WTTGSD\Binaries\Win64\ue4ss\Mods\`. UE4SS needs to be a recent experimental build, since the game runs on Unreal Engine 5.6.
 
 ## Use
 
-- **Title screen:** click **Settings**, then the **HYKEEM'S BABY MODE** button in the bottom-right corner.
+- **Title screen:** click **Settings**, then the **HYKEEM'S EASY MODE** button in the bottom-right corner.
 - **In game:** press **Esc**, then click the same button.
 
 | Key | Does |
 |-----|------|
-| F6 | Baby Mode on/off |
+| F6 | Easy Mode on/off |
 | F7 | Show killers through walls |
 | F8 | Show where the keys are |
 
@@ -60,7 +58,7 @@ Your choices are saved to `Scripts\settings.lua`. Delete that file to go back to
 
 Delete `dwmapi.dll` and the `ue4ss` folder from `WTTGSD\Binaries\Win64` inside the game folder.
 
-If you only want to turn Baby Mode off, rename `ue4ss\Mods\HykeemsBabyMode\enabled.txt` to anything else.
+If you only want to turn Easy Mode off, rename `ue4ss\Mods\HykeemsEasyMode\enabled.txt` to anything else.
 
 ## Notes
 
